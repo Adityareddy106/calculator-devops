@@ -127,7 +127,7 @@ Pipeline steps call Docker on the host through the mounted `/var/run/docker.sock
 ```bash
 cp jenkins/.env.example jenkins/.env      # fill in the secrets; .env is git-ignored
 docker compose -f jenkins/docker-compose.yml up -d --build
-# open http://localhost:8080 and log in with JENKINS_ADMIN_ID / JENKINS_ADMIN_PASSWORD
+# open http://localhost:8090 and log in with JENKINS_ADMIN_ID / JENKINS_ADMIN_PASSWORD
 ```
 
 The job polls GitHub every 2 minutes. It also accepts GitHub webhooks at `/github-webhook/` whenever

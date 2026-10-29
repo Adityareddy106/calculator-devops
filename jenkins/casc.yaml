@@ -30,7 +30,7 @@ credentials:
 
 unclassified:
   location:
-    url: "http://localhost:8080/"
+    url: "http://localhost:8090/"
     adminAddress: "${SMTP_USERNAME}"
   mailer:
     smtpHost: smtp.gmail.com

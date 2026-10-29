@@ -5,8 +5,9 @@ services:
     build: .
     image: calculator-jenkins:latest
     container_name: jenkins
+    # Host port 8090 avoids clashing with other local services on 8080 (e.g. a Jenkins in WSL)
     ports:
-      - "8080:8080"
+      - "8090:8080"
     env_file: .env
     volumes:
       - jenkins_home:/var/jenkins_home

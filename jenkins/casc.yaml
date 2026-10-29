@@ -69,7 +69,8 @@ jobs:
               }
             }
             scriptPath('Jenkinsfile')
-            lightweight(true)
+            // A full checkout records the commit even if the Jenkinsfile fails to parse, so SCM polling keeps working
+            lightweight(false)
           }
         }
       }

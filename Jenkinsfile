@@ -1,5 +1,5 @@
 // Runs shell commands on Linux/macOS agents and batch commands on Windows agents
-def run(String unixCmd, String windowsCmd = null) {
+def runCmd(String unixCmd, String windowsCmd = null) {
     if (isUnix()) {
         sh unixCmd
     } else {
@@ -42,13 +42,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                run 'mvn -B clean package -DskipTests'
+                runCmd 'mvn -B clean package -DskipTests'
             }
         }
 
         stage('Test') {
             steps {
-                run 'mvn -B test'
+                runCmd 'mvn -B test'
             }
             post {
                 always {
@@ -59,8 +59,8 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                run "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest ."
-                run 'docker compose build proxy'
+                runCmd "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest ."
+                runCmd 'docker compose build proxy'
             }
         }
 
@@ -69,15 +69,15 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: env.DOCKERHUB_CREDENTIALS,
                                                   usernameVariable: 'DOCKER_USER',
                                                   passwordVariable: 'DOCKER_PASS')]) {
-                    run('echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin',
+                    runCmd('echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin',
                         'echo %DOCKER_PASS%| docker login -u %DOCKER_USER% --password-stdin')
-                    run "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-                    run "docker push ${IMAGE_NAME}:latest"
+                    runCmd "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                    runCmd "docker push ${IMAGE_NAME}:latest"
                 }
             }
             post {
                 always {
-                    run 'docker logout'
+                    runCmd 'docker logout'
                 }
             }
         }
@@ -87,12 +87,12 @@ pipeline {
                 // IMAGE_NAME/IMAGE_TAG/PROXY_PORT are read by docker-compose.yml. Only containers whose
                 // config changed are recreated, so re-running against a live stack is safe.
                 // --wait blocks until every service's health check reports healthy.
-                run 'docker compose up -d --remove-orphans --wait --wait-timeout 180'
+                runCmd 'docker compose up -d --remove-orphans --wait --wait-timeout 180'
                 // Smoke tests go through the proxy from inside its container, so they work no matter
                 // whether Jenkins runs on the Docker host or in a container of its own
-                run 'docker compose exec -T proxy wget -qO- "http://127.0.0.1/actuator/health"'
-                run 'docker compose exec -T proxy wget -qO- "http://127.0.0.1/api/v1/add?a=2&b=3"'
-                run 'docker compose ps'
+                runCmd 'docker compose exec -T proxy wget -qO- "http://127.0.0.1/actuator/health"'
+                runCmd 'docker compose exec -T proxy wget -qO- "http://127.0.0.1/api/v1/add?a=2&b=3"'
+                runCmd 'docker compose ps'
             }
         }
     }
@@ -106,7 +106,7 @@ pipeline {
         }
         always {
             // Drop dangling layers left behind by rebuilt images
-            run 'docker image prune -f'
+            runCmd 'docker image prune -f'
         }
     }
 }

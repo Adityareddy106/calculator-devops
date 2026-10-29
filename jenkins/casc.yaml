@@ -1,0 +1,75 @@
+# Jenkins Configuration as Code. ${...} values come from jenkins/.env (never committed).
+jenkins:
+  systemMessage: "CSE 816 SPE mini-project: Calculator CI/CD"
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "${JENKINS_ADMIN_ID}"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: true
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: NOTIFY_EMAIL
+            value: "${NOTIFY_EMAIL}"
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: dockerhub-credentials
+              description: Docker Hub access token
+              username: "${DOCKERHUB_USERNAME}"
+              password: "${DOCKERHUB_TOKEN}"
+
+unclassified:
+  location:
+    url: "http://localhost:8080/"
+    adminAddress: "${SMTP_USERNAME}"
+  mailer:
+    smtpHost: smtp.gmail.com
+    smtpPort: "465"
+    useSsl: true
+    authentication:
+      username: "${SMTP_USERNAME}"
+      password: "${SMTP_PASSWORD}"
+  email-ext:
+    mailAccount:
+      smtpHost: smtp.gmail.com
+      smtpPort: "465"
+      useSsl: true
+      smtpUsername: "${SMTP_USERNAME}"
+      smtpPassword: "${SMTP_PASSWORD}"
+    defaultContentType: text/html
+
+jobs:
+  - script: |
+      pipelineJob('calculator-devops') {
+        description('Build, test, containerize, push and deploy the Calculator REST API')
+        properties {
+          pipelineTriggers {
+            triggers {
+              githubPush()
+              pollSCM { scmpoll_spec('H/2 * * * *') }
+            }
+          }
+        }
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote { url('https://github.com/Adityareddy106/calculator-devops.git') }
+                branch('*/main')
+              }
+            }
+            scriptPath('Jenkinsfile')
+            lightweight(true)
+          }
+        }
+      }

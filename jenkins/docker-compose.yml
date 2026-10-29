@@ -1,0 +1,21 @@
+name: jenkins
+
+services:
+  jenkins:
+    build: .
+    image: calculator-jenkins:latest
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+    env_file: .env
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - ./casc.yaml:/var/jenkins_config/casc.yaml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    # The Docker socket is owned by root:root (660) on Docker Desktop
+    group_add:
+      - "0"
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:

@@ -14,6 +14,7 @@ and redeploys the stack with Docker Compose, with no manual steps.
 | Subtract  | `GET /api/v1/subtract?a=&b=`      | `a - b`                                   |
 | Multiply  | `GET /api/v1/multiply?a=&b=`      | `a * b`                                   |
 | Divide    | `GET /api/v1/divide?a=&b=`        | `a / b`; `b=0` returns HTTP 400           |
+| Modulus   | `GET /api/v1/modulus?a=&b=`       | `a % b`; `b=0` returns HTTP 400           |
 | Health    | `GET /actuator/health`            | `{"status":"UP"}`                         |
 
 Success:

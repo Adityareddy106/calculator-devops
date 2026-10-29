@@ -42,6 +42,12 @@ public class CalculatorController {
         return new CalculationResult("divide", a, b, calculatorService.divide(a, b));
     }
 
+    @GetMapping("/modulus")
+    public CalculationResult modulus(@RequestParam double a, @RequestParam double b) {
+        validate(a, b);
+        return new CalculationResult("modulus", a, b, calculatorService.modulus(a, b));
+    }
+
     // Double parsing accepts "NaN" and "Infinity", which are not meaningful inputs
     private void validate(double a, double b) {
         if (!Double.isFinite(a) || !Double.isFinite(b)) {

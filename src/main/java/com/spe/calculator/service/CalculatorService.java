@@ -25,6 +25,13 @@ public class CalculatorService {
         return checkFinite(a / b);
     }
 
+    public double modulus(double a, double b) {
+        if (b == 0) {
+            throw new InvalidOperationException("Modulus by zero is not allowed");
+        }
+        return checkFinite(a % b);
+    }
+
     // Overflow produces Infinity, which cannot be represented in valid JSON
     private double checkFinite(double result) {
         if (!Double.isFinite(result)) {

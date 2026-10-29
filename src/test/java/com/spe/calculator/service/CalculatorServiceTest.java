@@ -48,6 +48,18 @@ class CalculatorServiceTest {
     }
 
     @Test
+    void modulusReturnsRemainder() {
+        assertEquals(1, calculator.modulus(7, 3));
+        assertEquals(-1, calculator.modulus(-7, 3));
+        assertEquals(1.5, calculator.modulus(5.5, 2));
+    }
+
+    @Test
+    void modulusByZeroThrows() {
+        assertThrows(InvalidOperationException.class, () -> calculator.modulus(1, 0));
+    }
+
+    @Test
     void overflowThrows() {
         assertThrows(InvalidOperationException.class, () -> calculator.multiply(Double.MAX_VALUE, 2));
         assertThrows(InvalidOperationException.class, () -> calculator.add(Double.MAX_VALUE, Double.MAX_VALUE));

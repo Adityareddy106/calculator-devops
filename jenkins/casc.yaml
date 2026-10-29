@@ -27,6 +27,12 @@ credentials:
               description: Docker Hub access token
               username: "${DOCKERHUB_USERNAME}"
               password: "${DOCKERHUB_TOKEN}"
+          - usernamePassword:
+              scope: GLOBAL
+              id: gmail-smtp
+              description: Gmail app password for build notifications
+              username: "${SMTP_USERNAME}"
+              password: "${SMTP_PASSWORD}"
 
 unclassified:
   location:
@@ -44,8 +50,8 @@ unclassified:
       smtpHost: smtp.gmail.com
       smtpPort: "465"
       useSsl: true
-      smtpUsername: "${SMTP_USERNAME}"
-      smtpPassword: "${SMTP_PASSWORD}"
+      # email-ext reads the SMTP login from a Jenkins credential
+      credentialsId: gmail-smtp
     defaultContentType: text/html
 
 jobs:
